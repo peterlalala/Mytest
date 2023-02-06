@@ -15,6 +15,10 @@ type User struct {
 	Email    string `json:"email"`
 }
 
+type error interface {
+	Error() string
+}
+
 func main() {
 	defer func() {
 		if err := recover(); err != nil {
@@ -26,17 +30,16 @@ func main() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	fmt.Println(db)
 	defer db.Close()
 	results, err := db.Query("SELECT id, username, password, email FROM users")
 	if err != nil {
-		panic(err.Error())
+		fmt.Println(err)
 	}
 	for results.Next() {
 		var user User
 		err = results.Scan(&user.ID, &user.Username, &user.Password, &user.Email)
 		if err != nil {
-			panic(err.Error())
+			fmt.Println(err)
 		}
 		fmt.Println(user.Username + " " + user.Password + " " + user.Email)
 	}
